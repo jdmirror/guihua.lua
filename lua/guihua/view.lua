@@ -209,12 +209,6 @@ end
 
 -- draw text line by line
 local function draw_lines(buf, start, end_at, data)
-  -- the #data should match or < start~end_at
-  if data == nil or #data < 1 then
-    log('empty body')
-    return
-  end
-
   api.nvim_buf_clear_namespace(0, _GH_SEARCH_NS, 0, -1)
   -- trace('draw_lines', buf, start, end_at, #data, data)
 
