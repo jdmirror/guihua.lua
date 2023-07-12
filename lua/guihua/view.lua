@@ -244,6 +244,9 @@ local function draw_lines(buf, start, end_at, data)
       draw_table_item(buf, l, i)
     end
   end
+  for i = draw_end + 1, end_at - 1 do
+      api.nvim_buf_set_lines(buf, i, i, true, { "" })
+  end
 end
 
 function View:on_draw(data)
