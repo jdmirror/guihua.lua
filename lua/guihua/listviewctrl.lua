@@ -72,6 +72,7 @@ function ListViewCtrl:initialize(delegate, ...)
   self.data = opts.data or {}
   self.preview = opts.preview or false
   self.prompt = opts.prompt
+  self.extra_line = opts.extra_line
   self.on_input_filter = opts.on_input_filter
   self.display_height = self.m_delegate.display_height or 10
   self.display_start_at = 1
@@ -198,7 +199,8 @@ function ListViewCtrl:on_next()
 
   local disp_h = listobj.display_height
   if listobj.m_delegate.prompt == true then
-    disp_h = disp_h - 1
+    local offset = listobj.extra_line and 2 or 1
+    disp_h = disp_h - offset
   end
 
   trace(
@@ -319,7 +321,8 @@ function ListViewCtrl:on_prev()
 
   local disp_h = listobj.display_height
   if listobj.m_delegate.prompt == true then
-    disp_h = disp_h - 1
+    local offset = listobj.extra_line and 2 or 1
+    disp_h = disp_h - offset
   end
 
   log(
@@ -400,7 +403,8 @@ function ListViewCtrl:draw_page(offset_direction)
   end
   -- local disp_h = listobj.display_height
   if listobj.m_delegate.prompt == true then
-    disp_h = disp_h - 1
+    local offset = listobj.extra_line and 2 or 1
+    disp_h = disp_h - offset
   end
 
   local l = listobj.display_start_at + offset_direction * disp_h

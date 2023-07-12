@@ -34,7 +34,8 @@ function View:initialize(...)
   trace('view start opts', opts)
   Rect.initialize(self, opts)
   if opts.prompt == true then
-    self.rect.height = self.rect.height + 1
+    local offset = opts.extra_line and 2 or 1
+    self.rect.height = self.rect.height + offset
   end
   self.cursor_pos = { 1, 1 }
   local loc = nil
@@ -47,6 +48,7 @@ function View:initialize(...)
     end
   end
   self.prompt = opts.prompt == true and true or false
+  self.extra_line = opts.extra_line
   self.ft = opts.ft or 'guihua'
   self.syntax = opts.syntax or 'guihua'
   self.display_height = self.rect.height
@@ -212,8 +214,9 @@ local function draw_lines(buf, start, end_at, data)
   api.nvim_buf_clear_namespace(0, _GH_SEARCH_NS, 0, -1)
   -- trace('draw_lines', buf, start, end_at, #data, data)
 
+  local total_lines = api.nvim_buf_line_count(buf) - 1
   vim.fn.clearmatches()
-  api.nvim_buf_set_lines(buf, start, end_at, false, {})
+  api.nvim_buf_set_lines(buf, start, total_lines, false, {})
   local draw_end = math.min(end_at - 1, #data - 1)
   for i = start, draw_end, 1 do
     local l = data[i + 1]
@@ -273,11 +276,14 @@ function View:on_draw(data)
   end
   local end_at = self.display_height -- C index
   if self.prompt == true then
-    end_at = end_at - 1
+    local offset = self.extra_line and 2 or 1
+    end_at = end_at - offset
   end
   draw_lines(self.buf, start, end_at, content)
   if self.prompt ~= true then
     api.nvim_buf_set_option(self.buf, 'readonly', true)
+  elseif self.extra_line then
+    api.nvim_buf_set_lines(self.buf, -2, -2, true, { "" })
   end
   -- vim.fn.setpos(".", {0, 1, 1, 0})
 end
